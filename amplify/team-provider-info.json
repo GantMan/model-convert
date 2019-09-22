@@ -1,0 +1,19 @@
+{
+    "dev": {
+        "awscloudformation": {
+            "AuthRoleName": "model-converter-dev-20190922102018-authRole",
+            "UnauthRoleArn": "arn:aws:iam::119079881983:role/model-converter-dev-20190922102018-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::119079881983:role/model-converter-dev-20190922102018-authRole",
+            "Region": "us-east-1",
+            "DeploymentBucketName": "model-converter-dev-20190922102018-deployment",
+            "UnauthRoleName": "model-converter-dev-20190922102018-unauthRole",
+            "StackName": "model-converter-dev-20190922102018",
+            "StackId": "arn:aws:cloudformation:us-east-1:119079881983:stack/model-converter-dev-20190922102018/7c87ac30-dd4c-11e9-bac6-0e9c8848c400"
+        },
+        "categories": {
+            "auth": {
+                "modelconverter1a3969b9": {}
+            }
+        }
+    }
+}

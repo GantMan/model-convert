@@ -1,0 +1,9 @@
+{
+	"auth": {
+		"modelconverter1a3969b9": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation",
+			"dependsOn": []
+		}
+	}
+}
