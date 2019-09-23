@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import ModelConverter from './Components/ModelConverter'
-import logo from './logo.svg'
 import './App.css'
 
 const App = () => {

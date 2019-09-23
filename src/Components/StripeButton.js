@@ -32,7 +32,7 @@ const stripeBtn = () => {
       alipay // accept Alipay (default false)
       bitcoin // accept Bitcoins (default false)
       stripeKey={publishableKey}
-      image="https://i.imgur.com/PieUY1f.jpg" //Pop-in header image
+      image="logo192.png" //Pop-in header image
       billingAddress={false}
     />
   )
