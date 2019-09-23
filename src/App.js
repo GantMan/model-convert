@@ -11,18 +11,17 @@ const App = () => {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Let's Rock</p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
+        <img
+          src="logo192.png"
+          className="App-logo animated fadeInDown"
+          alt="logo"
+        />
+        <h2 className="animated tada delay-1s">
+          Simple Online Model Converter
+        </h2>
+        <a className="App-link" onClick={() => setReady(true)} href="#">
+          Get Started
         </a>
-        <hr />
-        <button onClick={() => setReady(true)}>Let's Do This</button>
       </header>
     </div>
   )

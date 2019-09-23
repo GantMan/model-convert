@@ -8,6 +8,8 @@
 
 .App-header {
   background-color: #282c34;
+  background-image: url('/bg.jpg');
+  background-size: cover;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -19,4 +21,7 @@
 
 .App-link {
   color: #09d3ac;
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 10px 20px;
+  border-radius: 10px;
 }
