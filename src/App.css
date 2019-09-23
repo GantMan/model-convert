@@ -1,5 +1,7 @@
 .App {
   text-align: center;
+  display: flex;
+  flex-flow: column;
 }
 
 .App-logo {
@@ -17,6 +19,13 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+}
+
+.tint {
+  background-color: rgba(40, 44, 52, 0.6);
+  background-blend-mode: color;
+  min-height: 10vh;
+  padding: 0 0 30px 0;
 }
 
 .App-link {

@@ -43,17 +43,22 @@ function MC() {
   }
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>Welcome!</h1>
+      <header className="App-header tint">
+        <h2>Welcome!</h2>
         <p>
           You have {availableConversions} online conversions associated with
           your account.
         </p>
         <a className="App-link" onClick={() => addAvailableConversions(12)}>
-          FOR TESTING - Give Free Conversions!
+          TESTING BUTTON - Give Free Conversions
         </a>
+        <hr />
         <StripeBtn />
       </header>
+      <div class="body">
+        <h2>Select the model you'd like to convert</h2>
+        <p>Model selection code will go here</p>
+      </div>
     </div>
   )
 }
