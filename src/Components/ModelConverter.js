@@ -25,13 +25,17 @@ function MC() {
     getUserAttrs()
   }, [availableConversions, setAvailableConversions])
 
-  const updateAvailableConversions = async numLeft => {
+  const addAvailableConversions = async addConversions => {
+    const newCount = availableConversions + addConversions
     const user = await Auth.currentAuthenticatedUser()
     try {
       const result = await Auth.updateUserAttributes(user, {
-        'custom:availableConversions': numLeft.toString()
+        'custom:availableConversions': newCount.toString()
       })
 
+      if (result) {
+        setAvailableConversions(newCount)
+      }
       console.log(result)
     } catch (error) {
       console.log(error)
@@ -40,11 +44,14 @@ function MC() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>YOU LOGGED IN!</h1>
-        <p>You have {availableConversions} left.</p>
-        <button onClick={() => updateAvailableConversions(10)}>
-          Free Conversions!
-        </button>
+        <h1>Welcome!</h1>
+        <p>
+          You have {availableConversions} online conversions associated with
+          your account.
+        </p>
+        <a className="App-link" onClick={() => addAvailableConversions(12)}>
+          FOR TESTING - Give Free Conversions!
+        </a>
         <StripeBtn />
       </header>
     </div>
