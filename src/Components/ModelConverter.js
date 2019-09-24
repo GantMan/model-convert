@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import '../App.css'
 import { withAuthenticator } from 'aws-amplify-react'
-import { Auth } from 'aws-amplify'
+import uuid from 'uuid/v4'
+import { Auth, Storage } from 'aws-amplify'
 import StripeBtn from './StripeButton'
 
 function MC() {
   const fileRef = React.createRef()
   const [modelFile, setModelFile] = useState(null)
+  const [watchKey, setWatchKey] = useState(null)
   const [availableConversions, setAvailableConversions] = useState(0)
 
   useEffect(() => {
@@ -27,8 +29,43 @@ function MC() {
     getUserAttrs()
   }, [availableConversions, setAvailableConversions])
 
+  useEffect(() => {
+    if (!watchKey) return
+
+    let hasResult
+    let timeout
+
+    while (!hasResult) {
+      if (timeout) return
+      timeout = setTimeout(async () => {
+        const publicKey = await Storage.get(`results/${watchKey}`)
+        if (publicKey) {
+          console.log('DIS IS IT!', publicKey)
+          hasResult = true
+          setWatchKey(null)
+          return
+        }
+
+        console.log('no key yet :(')
+        timeout = null
+      }, 500)
+    }
+  }, [watchKey])
+
+  useEffect(() => {
+    if (!modelFile) return
+
+    Storage.put(`${uuid()}/${modelFile.name}`, modelFile, {
+      contentType: modelFile.type,
+      metadata: { types: 'tensorjs, onnx' }
+    })
+      .then(result => {
+        setWatchKey(result.key)
+      })
+      .catch(error => console.log(error))
+  }, [modelFile, setWatchKey])
+
   const setFile = event => {
-    console.log(event.target.files[0])
     setModelFile(event.target.files[0])
   }
 
@@ -64,7 +101,6 @@ function MC() {
       </header>
       <div className="body">
         <h2>Select the model you'd like to convert</h2>
-        <p>{modelFile && modelFile.name}</p>
         <input
           type="file"
           name="fileupload"
@@ -72,6 +108,7 @@ function MC() {
           onChange={setFile}
           ref={fileRef}
         />
+        <p>{modelFile && modelFile.name}</p>
       </div>
     </div>
   )
