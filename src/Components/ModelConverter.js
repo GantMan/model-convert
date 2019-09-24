@@ -5,6 +5,8 @@ import { Auth } from 'aws-amplify'
 import StripeBtn from './StripeButton'
 
 function MC() {
+  const fileRef = React.createRef()
+  const [modelFile, setModelFile] = useState(null)
   const [availableConversions, setAvailableConversions] = useState(0)
 
   useEffect(() => {
@@ -24,6 +26,11 @@ function MC() {
 
     getUserAttrs()
   }, [availableConversions, setAvailableConversions])
+
+  const setFile = event => {
+    console.log(event.target.files[0])
+    setModelFile(event.target.files[0])
+  }
 
   const addAvailableConversions = async addConversions => {
     const newCount = availableConversions + addConversions
@@ -55,9 +62,16 @@ function MC() {
         <hr />
         <StripeBtn />
       </header>
-      <div class="body">
+      <div className="body">
         <h2>Select the model you'd like to convert</h2>
-        <p>Model selection code will go here</p>
+        <p>{modelFile && modelFile.name}</p>
+        <input
+          type="file"
+          name="fileupload"
+          id="fileupload"
+          onChange={setFile}
+          ref={fileRef}
+        />
       </div>
     </div>
   )

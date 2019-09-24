@@ -6,13 +6,31 @@ const stripeBtn = () => {
 
   const onToken = token => {
     const body = {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods':
+          'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token'
+      },
       amount: 999,
       token: token
     }
-    axios
-      .post('http://localhost:8000/payment', body)
+    console.log('Stripe token', token)
+    axios({
+      method: 'post',
+      crossdomain: true,
+      config: {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods':
+            'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+          'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token'
+        }
+      },
+      url: 'http://54.146.20.242',
+      data: body
+    })
       .then(response => {
-        console.log(response)
         alert('Payment Success')
       })
       .catch(error => {
