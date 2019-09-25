@@ -5,16 +5,18 @@ exports.handler = async function(event, context) {
   // Get the object from the event and show its content type
   const bucket = event.Records[0].s3.bucket.name
   const key = event.Records[0].s3.object.key
-  const [baseFolder, ...parts] = key.split('/')
+  const [, baseFolder, ...parts] = key.split('/')
 
-  if (baseFolder !== 'public') return
+  if (baseFolder === 'results') return
+
+  console.log('passed baseFolder')
 
   try {
     const file = await s3.getObject({ Bucket: bucket, Key: key }).promise()
+    console.log('File', { file })
+    console.log('MetaData', { data: file.Metadata })
 
-    console.log('FILE', { file: file })
-
-    // Great spot for security!!!
+    // TODO: security!!!
     // const result = await axios.post('your express server', {
     //   body: {
     //     file: file.Body,
@@ -27,7 +29,7 @@ exports.handler = async function(event, context) {
     await s3
       .putObject({
         Bucket: bucket,
-        Key: `public/results/${parts.join('/')}`,
+        Key: `public/results/${baseFolder}/${parts.join('/')}`,
         Body: file.Body
       })
       .promise()
