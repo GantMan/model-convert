@@ -1,5 +1,7 @@
 const aws = require('aws-sdk')
 const s3 = new aws.S3()
+const axios = require('axios')
+const fs = require('fs')
 
 exports.handler = async function(event, context) {
   // Get the object from the event and show its content type
@@ -15,16 +17,16 @@ exports.handler = async function(event, context) {
     const file = await s3.getObject({ Bucket: bucket, Key: key }).promise()
     console.log('File', { file })
     console.log('MetaData', { data: file.Metadata })
+    const url = 'http://54.146.20.242/upload'
 
     // TODO: security!!!
-    // const result = await axios.post('your express server', {
-    //   body: {
-    //     file: file.Body,
-    //     types: file.MetaData
-    //   }
-    // })
-
-    // const [newKey] = fileKey.split(0)
+    const result = await axios.post(url, {
+      file: file.Body,
+      content: file.ContentType,
+      info: file.Metadata,
+      folder: baseFolder,
+      fileName: `${parts.join('/')}`
+    })
 
     await s3
       .putObject({

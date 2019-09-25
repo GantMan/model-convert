@@ -60,7 +60,7 @@
 				"Timeout": "25",
 				"Code": {
 					"S3Bucket": "model-converter-dev-20190922102018-deployment",
-					"S3Key": "amplify-builds/S3Triggerd2272cd3-4e4e4c7933636446596d-build.zip"
+					"S3Key": "amplify-builds/S3Triggerd2272cd3-57354f495a754636397a-build.zip"
 				}
 			}
 		},
