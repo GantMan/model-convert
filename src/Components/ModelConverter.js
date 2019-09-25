@@ -1,12 +1,29 @@
 import React, { useState, useEffect } from 'react'
 import '../App.css'
 import { withAuthenticator } from 'aws-amplify-react'
-import { Auth } from 'aws-amplify'
+import uuid from 'uuid/v4'
+import { Auth, Storage } from 'aws-amplify'
 import StripeBtn from './StripeButton'
+
+const UploadSection = props => {
+  const { modelFile, ready } = props.info
+  if (modelFile && !ready) {
+    return (
+      <div className="spacer">
+        <a className="App-link inverse" onClick={props.uploadClick}>
+          Upload Model
+        </a>
+      </div>
+    )
+  } else {
+    return null
+  }
+}
 
 function MC() {
   const fileRef = React.createRef()
-  const [modelFile, setModelFile] = useState(null)
+  const [modelFileInfo, setModelFileInfo] = useState({})
+  const [watchKey, setWatchKey] = useState(null)
   const [availableConversions, setAvailableConversions] = useState(0)
 
   useEffect(() => {
@@ -27,9 +44,58 @@ function MC() {
     getUserAttrs()
   }, [availableConversions, setAvailableConversions])
 
+  useEffect(() => {
+    if (!watchKey) return
+
+    let hasResult
+    let timeout
+
+    while (!hasResult) {
+      if (timeout) return
+      timeout = setTimeout(async () => {
+        // Poll for result file
+        const publicKey = await Storage.get(`results/${watchKey}`)
+        if (publicKey) {
+          // subtract a conversion
+          addAvailableConversions(-1)
+          // console.log('DIS IS IT!', publicKey)
+          setModelFileInfo({ download: publicKey, message: 'Download Result' })
+          hasResult = true
+          setWatchKey(null)
+          return
+        }
+
+        console.log('no key yet :(')
+        timeout = null
+      }, 500)
+    }
+  }, [watchKey, setModelFileInfo, modelFileInfo])
+
+  useEffect(() => {
+    const { modelFile, ready } = modelFileInfo
+    // leave if we're not good to upload
+    if (!ready || !modelFile) return
+    // upload - it triggers lamba!
+    Storage.put(`${uuid()}/${modelFile.name}`, modelFile, {
+      contentType: modelFile.type,
+      metadata: { types: 'all' }
+    })
+      .then(result => {
+        // Watch for result
+        // TODO: This is the same file name right now
+        setWatchKey(result.key)
+        // clear it out
+        setModelFileInfo({ message: 'Processing...' })
+      })
+      .catch(error => setModelFileInfo({ error: 'Failed to upload' }))
+  }, [modelFileInfo, setWatchKey, setModelFileInfo])
+
   const setFile = event => {
-    console.log(event.target.files[0])
-    setModelFile(event.target.files[0])
+    setModelFileInfo({
+      ready: false,
+      message: 'File Selected',
+      modelFile: event.target.files[0]
+    })
   }
 
   const addAvailableConversions = async addConversions => {
@@ -43,7 +109,6 @@ function MC() {
       if (result) {
         setAvailableConversions(newCount)
       }
-      console.log(result)
     } catch (error) {
       console.log(error)
     }
@@ -64,7 +129,16 @@ function MC() {
       </header>
       <div className="body">
         <h2>Select the model you'd like to convert</h2>
-        <p>{modelFile && modelFile.name}</p>
+        <UploadSection
+          info={modelFileInfo}
+          uploadClick={() =>
+            setModelFileInfo({
+              ...modelFileInfo,
+              message: 'Uploading',
+              ready: true
+            })
+          }
+        />
         <input
           type="file"
           name="fileupload"
@@ -72,6 +146,7 @@ function MC() {
           onChange={setFile}
           ref={fileRef}
         />
+        <a href={modelFileInfo.download}>{modelFileInfo.message}</a>
       </div>
     </div>
   )
