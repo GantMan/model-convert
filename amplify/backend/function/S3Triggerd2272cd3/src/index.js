@@ -11,13 +11,26 @@ exports.handler = async function(event, context) {
 
   if (baseFolder === 'results') return
 
-  console.log('passed baseFolder')
-
   try {
-    const file = await s3.getObject({ Bucket: bucket, Key: key }).promise()
+    let url, file
+    // In production - use actual file
+    if (process.env.USE_LIVE) {
+      file = await s3.getObject({ Bucket: bucket, Key: key }).promise()
+      url = 'http://54.146.20.242/upload'
+    } else {
+      // In local Use bucket stub
+      const fileContents = fs.readFileSync(
+        '/Users/gantman/Downloads/favicon-16x16.png'
+      )
+      file = {
+        Body: Buffer.from(fileContents, 'utf8'),
+        ContentType: 'image/png',
+        Metadata: { convert: 'all' }
+      }
+      url = 'http://localhost:8000/upload'
+    }
     console.log('File', { file })
     console.log('MetaData', { data: file.Metadata })
-    const url = 'http://54.146.20.242/upload'
 
     // TODO: security!!!
     const result = await axios.post(url, {
@@ -28,11 +41,13 @@ exports.handler = async function(event, context) {
       fileName: `${parts.join('/')}`
     })
 
+    console.log('API RESULT', result.data)
+
     await s3
       .putObject({
         Bucket: bucket,
-        Key: `public/results/${baseFolder}/${parts.join('/')}`,
-        Body: file.Body
+        Key: `public/results/${baseFolder}/${result.data.fileName}`,
+        Body: result.data.fileBody
       })
       .promise()
   } catch (error) {

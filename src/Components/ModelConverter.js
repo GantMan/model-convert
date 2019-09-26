@@ -26,6 +26,22 @@ function MC() {
   const [watchKey, setWatchKey] = useState(null)
   const [availableConversions, setAvailableConversions] = useState(0)
 
+  const addAvailableConversions = async addConversions => {
+    const newCount = availableConversions + addConversions
+    const user = await Auth.currentAuthenticatedUser()
+    try {
+      const result = await Auth.updateUserAttributes(user, {
+        'custom:availableConversions': newCount.toString()
+      })
+
+      if (result) {
+        setAvailableConversions(newCount)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   useEffect(() => {
     const getUserAttrs = async () => {
       try {
@@ -54,7 +70,8 @@ function MC() {
       if (timeout) return
       timeout = setTimeout(async () => {
         // Poll for result file
-        const publicKey = await Storage.get(`results/${watchKey}`)
+        const [baseFolder, ..._parts] = watchKey.split('/')
+        const publicKey = await Storage.get(`results/${baseFolder}/result.zip`)
         if (publicKey) {
           // subtract a conversion
           addAvailableConversions(-1)
@@ -69,7 +86,7 @@ function MC() {
         timeout = null
       }, 500)
     }
-  }, [watchKey, setModelFileInfo, modelFileInfo])
+  }, [watchKey, setModelFileInfo, modelFileInfo, addAvailableConversions])
 
   useEffect(() => {
     const { modelFile, ready } = modelFileInfo
@@ -98,21 +115,6 @@ function MC() {
     })
   }
 
-  const addAvailableConversions = async addConversions => {
-    const newCount = availableConversions + addConversions
-    const user = await Auth.currentAuthenticatedUser()
-    try {
-      const result = await Auth.updateUserAttributes(user, {
-        'custom:availableConversions': newCount.toString()
-      })
-
-      if (result) {
-        setAvailableConversions(newCount)
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
   return (
     <div className="App">
       <header className="App-header tint">
