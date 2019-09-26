@@ -47,7 +47,7 @@ exports.handler = async function(event, context) {
       .putObject({
         Bucket: bucket,
         Key: `public/results/${baseFolder}/${result.data.fileName}`,
-        Body: result.data.fileBody
+        Body: Buffer.from(result.data.fileBody)
       })
       .promise()
   } catch (error) {
