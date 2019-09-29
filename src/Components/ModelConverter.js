@@ -20,12 +20,12 @@ const UploadSection = props => {
   }
 }
 
-function MC() {
+function ModelConvertor() {
   const fileRef = React.createRef()
   const [modelFileInfo, setModelFileInfo] = useState({})
   const [watchKey, setWatchKey] = useState(null)
   const [availableConversions, setAvailableConversions] = useState(0)
-
+  
   const addAvailableConversions = async addConversions => {
     const newCount = availableConversions + addConversions
     const user = await Auth.currentAuthenticatedUser()
@@ -129,32 +129,34 @@ function MC() {
         <hr />
         <StripeBtn />
       </header>
-      <div className="body">
-        <h2>Select the model you'd like to convert</h2>
-        <UploadSection
-          info={modelFileInfo}
-          uploadClick={() =>
-            setModelFileInfo({
-              ...modelFileInfo,
-              message: 'Uploading',
-              ready: true
-            })
-          }
-        />
-        <input
-          type="file"
-          name="fileupload"
-          id="fileupload"
-          onChange={setFile}
-          ref={fileRef}
-        />
-        <a href={modelFileInfo.download}>{modelFileInfo.message}</a>
-      </div>
+      {availableConversions > 0 &&
+        <div className="body">
+          <h2>Select the model you'd like to convert</h2>
+          <UploadSection
+            info={modelFileInfo}
+            uploadClick={() =>
+              setModelFileInfo({
+                ...modelFileInfo,
+                message: 'Uploading',
+                ready: true
+              })
+            }
+          />
+          <input
+            type="file"
+            name="fileupload"
+            id="fileupload"
+            onChange={setFile}
+            ref={fileRef}
+          />
+          <a href={modelFileInfo.download}>{modelFileInfo.message}</a>
+        </div>
+      }
     </div>
   )
 }
 
-export default withAuthenticator(MC, {
+export default withAuthenticator(ModelConvertor, {
   includeGreetings: true,
   usernameAttributes: 'email'
 })
