@@ -12,46 +12,54 @@ exports.handler = async function(event, context) {
   if (baseFolder === 'results') return
 
   try {
-    let url, file
-    // In production - use actual file
-    if (process.env.USE_LIVE) {
-      file = await s3.getObject({ Bucket: bucket, Key: key }).promise()
-      url = 'http://54.146.20.242/upload'
-    } else {
-      // In local Use bucket stub
-      const fileContents = fs.readFileSync(
-        '/Users/gantman/Downloads/favicon-16x16.png'
-      )
-      file = {
-        Body: Buffer.from(fileContents, 'utf8'),
-        ContentType: 'image/png',
-        Metadata: { convert: 'all' }
-      }
-      url = 'http://localhost:8000/upload'
-    }
-    console.log('File', { file })
-    console.log('MetaData', { data: file.Metadata })
-
-    // TODO: security!!!
-    const result = await axios.post(url, {
-      file: file.Body,
-      content: file.ContentType,
-      info: file.Metadata,
+    // Tell the API to process the file
+    const result = await axios.post('http://54.146.20.242/reform', {
+      Key: key,
       folder: baseFolder,
       fileName: `${parts.join('/')}`
     })
 
-    console.log('API RESULT', result.data)
+    // -----------------------------------------------
+    // let url, file
+    // In production - use actual file
+    // if (process.env.USE_LIVE) {
+    //   file = await s3.getObject({ Bucket: bucket, Key: key }).promise()
+    //   url = 'http://54.146.20.242/upload'
+    // } else {
+    //   // In local Use bucket stub
+    //   const fileContents = fs.readFileSync(
+    //     '/Users/gantman/Downloads/favicon-16x16.png'
+    //   )
+    //   file = {
+    //     Body: Buffer.from(fileContents, 'utf8'),
+    //     ContentType: 'image/png',
+    //     Metadata: { convert: 'all' }
+    //   }
+    //   url = 'http://localhost:8000/upload'
+    // }
+    // //console.log('File', { file })
+    // console.log('MetaData', { data: file.Metadata })
 
-    await s3
-      .putObject({
-        Bucket: bucket,
-        Key: `public/results/${baseFolder}/${result.data.fileName}`,
-        Body: Buffer.from(result.data.fileBody)
-      })
-      .promise()
+    // // TODO: security!!!
+    // const result = await axios.post(url, {
+    //   file: file.Body,
+    //   content: file.ContentType,
+    //   info: file.Metadata,
+    //   folder: baseFolder,
+    //   fileName: `${parts.join('/')}`
+    // }, {maxContentLength: Infinity})
+
+    // console.log('GOT API RESULT')
+
+    // await s3
+    //   .putObject({
+    //     Bucket: bucket,
+    //     Key: `public/results/${baseFolder}/${result.data.fileName}`,
+    //     Body: Buffer.from(result.data.fileBody)
+    //   })
+    //   .promise()
   } catch (error) {
-    console.log(error)
+    console.log('BIG OLL ERRRROR!!!', error)
   }
 
   // console.log(`Bucket: ${bucket}`, `Key: ${key}`)
