@@ -1,7 +1,7 @@
 import React from 'react'
 import StripeCheckout from 'react-stripe-checkout'
 import axios from 'axios'
-const stripeBtn = () => {
+const stripeBtn = props => {
   const publishableKey = 'pk_test_LNFLm8rQEiYilbbqhXUX8Ogf00025ngOE8'
 
   const onToken = token => {
@@ -15,7 +15,7 @@ const stripeBtn = () => {
       amount: 999,
       token: token
     }
-    console.log('Stripe token', token)
+
     axios({
       method: 'post',
       crossdomain: true,
@@ -31,7 +31,8 @@ const stripeBtn = () => {
       data: body
     })
       .then(response => {
-        alert('Payment Success')
+        // Success
+        props.onSuccess()
       })
       .catch(error => {
         console.log('Payment Error: ', error)

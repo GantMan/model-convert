@@ -25,7 +25,7 @@ function ModelConvertor() {
   const [modelFileInfo, setModelFileInfo] = useState({})
   const [watchKey, setWatchKey] = useState(null)
   const [availableConversions, setAvailableConversions] = useState(0)
-  
+
   const addAvailableConversions = async addConversions => {
     const newCount = availableConversions + addConversions
     const user = await Auth.currentAuthenticatedUser()
@@ -118,7 +118,7 @@ function ModelConvertor() {
   return (
     <div className="App">
       <header className="App-header tint">
-        <h2>Welcome!</h2>
+        <h2>REFORM</h2>
         <p>
           You have {availableConversions} online conversions associated with
           your account.
@@ -127,9 +127,9 @@ function ModelConvertor() {
           TESTING BUTTON - Give Free Conversions
         </a>
         <hr />
-        <StripeBtn />
+        <StripeBtn onSuccess={() => addAvailableConversions(12)} />
       </header>
-      {availableConversions > 0 &&
+      {availableConversions > 0 && (
         <div className="body">
           <h2>Select the model you'd like to convert</h2>
           <UploadSection
@@ -151,7 +151,7 @@ function ModelConvertor() {
           />
           <a href={modelFileInfo.download}>{modelFileInfo.message}</a>
         </div>
-      }
+      )}
     </div>
   )
 }

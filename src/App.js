@@ -15,9 +15,14 @@ const App = () => {
           className="App-logo animated fadeInDown"
           alt="logo"
         />
-        <h2 className="animated tada delay-1s">
-          Simple Online Model Converter
-        </h2>
+        <h2>REFORM</h2>
+        <h4 className="dancer animated tada delay-1s">
+          Online Model Converter
+        </h4>
+        <p>
+          Upload your Keras model and enjoy conversions to TensorFlow,
+          TensorFlow Lite, and TensorFlow.js
+        </p>
         <a className="App-link" onClick={() => setReady(true)} href="#">
           Get Started
         </a>
