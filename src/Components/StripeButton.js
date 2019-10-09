@@ -2,7 +2,8 @@ import React from 'react'
 import StripeCheckout from 'react-stripe-checkout'
 import axios from 'axios'
 const stripeBtn = props => {
-  const publishableKey = 'pk_test_LNFLm8rQEiYilbbqhXUX8Ogf00025ngOE8'
+  // const publishableKey = 'pk_test_LNFLm8rQEiYilbbqhXUX8Ogf00025ngOE8' // dev
+  const publishableKey = 'pk_live_FVDFfR6npdXAGiNhcWvLvuXb' // live
 
   const onToken = token => {
     const body = {
