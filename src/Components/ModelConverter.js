@@ -124,9 +124,9 @@ function ModelConvertor() {
           You have {availableConversions} online conversions associated with
           your account.
         </p>
-        <a className="App-link" onClick={() => addAvailableConversions(12)}>
+        {/* <a className="App-link" onClick={() => addAvailableConversions(12)}>
           TESTING BUTTON - Give Free Conversions
-        </a>
+        </a> */}
         <hr />
         <StripeBtn onSuccess={() => addAvailableConversions(12)} />
       </header>
