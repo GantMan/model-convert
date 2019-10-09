@@ -64,28 +64,29 @@ function ModelConvertor() {
     if (!watchKey) return
 
     let hasResult
-    let timeout
+    let myInterval
+    const myWatchKey = watchKey
 
-    while (!hasResult) {
-      if (timeout) return
-      timeout = setTimeout(async () => {
-        // Poll for result file
-        const [baseFolder, ..._parts] = watchKey.split('/')
-        const publicKey = await Storage.get(`results/${baseFolder}/result.zip`)
-        if (publicKey) {
-          // subtract a conversion
-          addAvailableConversions(-1)
-          // console.log('DIS IS IT!', publicKey)
-          setModelFileInfo({ download: publicKey, message: 'Download Result' })
-          hasResult = true
-          setWatchKey(null)
-          return
-        }
+    myInterval = setInterval(async () => {
+      // First thing's first kill top level watchKey to stop dupes
+      setWatchKey(null)
+      // Poll for result file
+      const [baseFolder, ..._parts] = myWatchKey.split('/')
+      const resultFolder = `results/${baseFolder}/`
+      const contents = await Storage.list(resultFolder)
+      const isDone = !!contents.length
+      if (isDone) {
+        const publicKey = await Storage.get(`${resultFolder}result.zip`)
+        // subtract a conversion
+        addAvailableConversions(-1)
+        console.log('DIS IS IT!', publicKey)
+        setModelFileInfo({ download: publicKey, message: 'Download Result' })
+        clearInterval(myInterval)
+        return
+      }
 
-        console.log('no key yet :(')
-        timeout = null
-      }, 500)
-    }
+      console.log('no key yet :(')
+    }, 3000)
   }, [watchKey, setModelFileInfo, modelFileInfo, addAvailableConversions])
 
   useEffect(() => {
